@@ -1,0 +1,23 @@
+---
+description: Use Super Resume when creating, revising, scoring, designing, or publishing resumes/portfolios, or when generating job-fit project blueprints.
+alwaysApply: false
+---
+
+# Super Resume
+
+Read `SKILL.md` and follow the workflow there.
+
+Use this rule for:
+
+- resume creation or revision
+- portfolio creation or revision
+- job-posting fit analysis
+- GitHub-based resume drafting
+- project or problem-solving experience blueprints
+- resume PDF or design output
+
+If Cursor cannot use a Codex-specific UI instruction such as `request_user_input`, ask the same question in chat.
+
+Do not skip GATE steps.
+
+Local `references/` files are optional and ignored by git. If they are missing, tell the user they can add references or continue without them.

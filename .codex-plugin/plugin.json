@@ -1,0 +1,37 @@
+{
+  "name": "super-resume",
+  "version": "0.1.0",
+  "description": "공고 기준으로 이력서/포트폴리오를 맞춤 수정하고 문제해결 프로젝트 기획서를 생성하는 Codex workflow plugin.",
+  "author": {
+    "name": "cyjoon68"
+  },
+  "repository": "https://github.com/cyjoon68/super-resume",
+  "license": "UNLICENSED",
+  "keywords": [
+    "resume",
+    "portfolio",
+    "job-search",
+    "career",
+    "codex",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Super Resume",
+    "shortDescription": "공고 맞춤 이력서/포트폴리오 워크플로우.",
+    "longDescription": "Super Resume은 이력서, 포트폴리오, GitHub, 채용 공고를 읽고 공고 적합도 분석, 문장 수정, 프로젝트 경험 설계, 디자인/PDF 출력까지 이어주는 Codex workflow plugin입니다.",
+    "developerName": "cyjoon68",
+    "category": "Productivity",
+    "capabilities": [
+      "Skills"
+    ],
+    "defaultPrompt": [
+      "Use $super-resume to tailor my resume to this job posting.",
+      "Use $super-resume to create portfolio-ready project experience.",
+      "Use $super-resume to improve my resume and portfolio."
+    ],
+    "brandColor": "#1F2937",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png"
+  }
+}
