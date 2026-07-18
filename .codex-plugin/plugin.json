@@ -15,7 +15,7 @@
     "codex",
     "skills"
   ],
-  "skills": "./skills/",
+  "skills": ".agents/skills/",
   "interface": {
     "displayName": "Super Resume",
     "shortDescription": "공고 맞춤 이력서/포트폴리오 워크플로우.",
