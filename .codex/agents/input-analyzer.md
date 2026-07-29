@@ -76,3 +76,6 @@ description: "사용자 입력(작업 모드 + 생성할 산출물 + 이력서/�
 - **의존하는 에이전트:** Content Strategist (Input Analyzer의 출력을 입력으로 사용)
 - **의존받는 에이전트:** 없음 (최초 실행 에이전트)
 - **공유 자원:** `_workspace/` 디렉토리
+
+## References
+분석 시작 전 references/core.md를 로드한다. 첫 화면 요구사항, 실패 패턴, 지원동기 구조를 분석 기준으로 사용한다.

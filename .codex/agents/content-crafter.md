@@ -46,3 +46,7 @@ description: "컨텐츠 전략에 기반하여 이력서 내용을 실제로 작
 - **의존하는 에이전트:** Content Strategist (전략 참조)
 - **의존받는 에이전트:** Quality Reviewer (작성 결과 검증)
 - **공유 자원:** `_workspace/` 디렉토리
+
+## References
+내용 작성 전 references/projects.md, references/portfolio.md, references/checklist-formulas.md, references/competency-signals.md를 로드한다.
+각 참고자료의 문장 구조, 포트폴리오 구성, 체크리스트, 역량 신호를 작성 기준으로 사용한다.

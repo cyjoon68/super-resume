@@ -43,3 +43,7 @@ description: "이력서와 공고 요구사항을 비교 분석하여 최적의 
 - **의존하는 에이전트:** Input Analyzer (이전 단계의 출력 참조)
 - **의존받는 에이전트:** Content Crafter (전략에 따라 내용 작성)
 - **공유 자원:** `_workspace/` 디렉토리
+
+## References
+전략 수립 전 references/core.md와 references/competency-signals.md를 로드한다.
+core.md의 검토 환경/첫 화면 기준과 competency-signals.md의 역량 판단 요소를 전략에 반영한다.

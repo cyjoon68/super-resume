@@ -52,15 +52,25 @@ Phase 6           →  .agents/skills/result-presenter/SKILL.md
 ## Reference Files
 
 Reference files stay in this skill's local `references/` directory and are ignored by git.
-If the directory is missing or empty, tell the user:
-"스킬 폴더 안의 `references/`가 비어 있습니다. 이력서 작성 레퍼런스를 입력해 주시면 스킬 안의 `references/`에 저장하고 진행할 수 있고, 넣지 않고 바로 진행할 수도 있습니다."
+Before Phase 0 begins, load every file in `references/`.
+Each loaded file must be applied during the relevant Phase as specified below.
 
-Open only the relevant reference files from this skill's `references/` directory.
-Use references during analysis, strategy, drafting, experience blueprint generation, and quality review when useful. These references do not replace the required Phase/GATE flow below.
-If a needed reference file is missing, continue without it unless the user wants to add it first.
+```bash
+_REF_DIR="references"
+find "$_REF_DIR" -type f 2>/dev/null | sort
+```
+
+Mapping:
+- `core.md` → input-analyzer (분석), content-strategist (전략), content-crafter (작성)
+- `checklist-formulas.md` → content-crafter (작성), quality-reviewer (검증)
+- `competency-signals.md` → content-strategist (매칭), content-crafter (문장)
+- `experience-blueprints.md` → blueprint-generator (기획)
+- `portfolio.md` → content-crafter (포트폴리오 작성)
+- `projects.md` → content-crafter (프로젝트 설명), content-strategist (평가)
+
+If a reference file cannot be read, report the path and continue.
 
 ---
-
 ## Phase 0: 컨텍스트 확인 + 입력 수집
 
 `.agents/skills/input-collector/SKILL.md`를 참조하여 작업 모드, 산출물, 입력 자료를 수집한다.

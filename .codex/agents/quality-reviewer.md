@@ -41,3 +41,6 @@ description: "이력서 내용의 품질을 검증. 오타/문법/말투/ATS 호
 - **의존하는 에이전트:** Content Crafter (검토 대상 콘텐츠)
 - **의존받는 에이전트:** Design & Publisher (검증 완료된 콘텐츠 전달)
 - **공유 자원:** `_workspace/` 디렉토리
+
+## References
+검증 전 references/checklist-formulas.md를 로드한다. 확인 항목과 문장 구성 패턴을 검증 기준으로 사용한다.
