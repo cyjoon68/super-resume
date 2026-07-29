@@ -113,4 +113,4 @@ Restart Codex after installing or updating.
 
 ## License
 
-UNLICENSED.
+[MIT](LICENSE).
