@@ -6,6 +6,7 @@ description: "전체 Phase/GATE 흐름을 제어하고 각 Phase를 전용 스�
 # Orchestrator
 
 - SKILL.md(오케스트레이터)의 Phase/GATE 흐름에 따라 실행
+- Phase 0에서는 작업 모드만 질문하고 사용자 응답을 기다린다. 입력 수집은 `work_mode` 확정 후 Phase 0-I에서 시작한다.
 - 각 Phase 시작 시 해당 전용 스킬(`.agents/skills/<name>/SKILL.md`) 로드
 - GATE 도달 시 사용자 응답 대기 후 분기 처리
 - Phase 간 데이터는 `_workspace/` 디렉토리로 전달

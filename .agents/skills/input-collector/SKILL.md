@@ -1,8 +1,8 @@
 ---
 name: input-collector
 description: >
-  Phase 0. 사용자의 입력을 수집하고 작업 모드(resume_based / experience_blueprint),
-  산출물(output_target), 레퍼런스, 지원 조건, 말투 등을 수집한다.
+  Phase 0-I. Phase 0에서 확정된 작업 모드(resume_based / experience_blueprint)를 받아
+  사용자의 산출물(output_target), 레퍼런스, 지원 조건, 말투 등을 수집한다.
   시나리오 분류 및 _workspace/01_scenario.json 생성을 담당한다.
 allowed-tools:
   - Bash
@@ -13,11 +13,18 @@ allowed-tools:
   - request_user_input
 ---
 
-# Input Collector — 컨텍스트 확인 + 입력 수집
+# Input Collector — Phase 0-I 컨텍스트 확인 + 입력 수집
 
-본격적인 분석 전, 사용자의 입력을 수집하고 작업 모드와 시나리오를 분류한다.
+본격적인 분석 전, Phase 0에서 확정된 작업 모드에 따라 입력을 수집하고 시나리오를 분류한다.
 선택 질문은 가능한 경우 Codex의 실제 질문 UI(`request_user_input`)로 표시한다.
 `request_user_input`을 사용할 수 없는 환경에서만 동일한 문구를 일반 텍스트 질문으로 대체한다.
+
+## 선행 조건: Phase 0 작업 모드
+
+- 입력으로 `work_mode: "resume_based" | "experience_blueprint"`가 반드시 있어야 한다.
+- `work_mode`가 없으면 아무 입력도 수집하지 않고 오케스트레이터의 Phase 0으로 돌아간다.
+- 이 스킬은 `work_mode`를 질문, 추론, 기본값 지정, 변경하지 않는다.
+- 전달받은 `work_mode`를 `_workspace/01_scenario.json`에 그대로 저장한다.
 
 ## 컨텍스트 확인
 
@@ -36,40 +43,7 @@ mkdir -p "$_WORKSPACE_DIR"
 
 ---
 
-## Phase 0-A: 입력 확인 + 작업 모드 선택
-
-먼저 사용자가 제공한 입력을 짧게 확인하고, 같은 질문에서 작업 모드를 선택하게 한다.
-
-표시 형식:
-
-```text
-입력 확인:
-이력서: {resume_path_or_summary}
-포트폴리오: {portfolio_path_or_summary_or_없음}
-GitHub: {github_url_or_없음}
-공고: {job_url_or_target}
-
-모드 선택
-```
-
-Codex 질문 UI를 사용할 수 있으면 다음 구조로 질문한다:
-
-```text
-질문: 어떤 방식으로 진행할까요?
-선택지:
-1. 현재 이력서 기준으로 공고에 맞추기
-2. 이력서에 넣을 프로젝트/문제해결 경험 생성까지 같이 하기
-```
-
-- 1번 또는 "이력서 기준" → `work_mode: "resume_based"`
-- 2번, "프로젝트 경험 생성", "문제해결 경험 생성" → `work_mode: "experience_blueprint"`
-- 모드 선택 질문은 생략하지 않는다. 사용자가 이미 요청 방향을 말했어도 반드시 이 질문으로 `work_mode`를 확정한다.
-- 사용자 응답 전에는 `resume_based` 또는 `experience_blueprint`를 기본값으로 확정하지 않는다.
-- 이력서 없이 공고 URL/목표 직군만 제공하거나 프로젝트 기획을 요청한 경우에도, `experience_blueprint`를 추천할 수는 있지만 사용자 선택을 받아야 한다.
-
----
-
-## Phase 0-Reference Gate: 레퍼런스 확인
+## Phase 0-I-A: 레퍼런스 확인
 
 이 체크는 `SKILL.md`가 있는 스킬 폴더 기준으로 실행한다.
 
@@ -87,9 +61,9 @@ echo "HAS_REFERENCES: $_HAS_REFERENCES"
 
 ---
 
-## Phase 0-B: 생성할 산출물 선택
+## Phase 0-I-B: 생성할 산출물 선택
 
-작업 모드가 정해진 뒤 별도 질문으로 생성할 산출물을 선택하게 한다.
+Phase 0에서 작업 모드가 확정된 뒤 별도 질문으로 생성할 산출물을 선택하게 한다.
 
 Codex 질문 UI를 사용할 수 있으면 다음 구조로 질문한다:
 

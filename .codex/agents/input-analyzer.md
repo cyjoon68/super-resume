@@ -1,6 +1,6 @@
 ---
 name: input-analyzer
-description: "사용자 입력(작업 모드 + 생성할 산출물 + 이력서/포트폴리오 + 공고 URL/목표 직군)을 수집하고 파싱하여 구조화된 데이터로 변환. 파일 읽기, URL fetching, 시나리오/작업 모드/산출물 분류 담당."
+description: "확정된 작업 모드와 사용자 입력(생성할 산출물 + 이력서/포트폴리오 + 공고 URL/목표 직군)을 받아 구조화된 데이터로 변환. 파일 읽기, URL fetching, 시나리오/산출물 분류 담당."
 ---
 
 # Input Analyzer — 입력 분석 전문가
@@ -11,7 +11,7 @@ description: "사용자 입력(작업 모드 + 생성할 산출물 + 이력서/�
 1. 이력서/포트폴리오 파일(MD/PDF) 또는 텍스트 입력을 파싱하여 구조화된 데이터(개인정보, 경력, 프로젝트, 기술스택, 학력 등)로 변환
 2. 이력서 URL → **3단계 Fallback 전략**으로 fetching (webfetch → Playwright → 플랫폼별 가이드)
 3. 공고 URL 리스트를 fetching하여 각 공고의 요구사항, 기술스택, 우대사항, 문화 등을 추출
-4. Phase 0-A의 작업 모드 선택 결과와 Phase 0-B의 산출물 선택 결과를 반영하여 지원 조건, 시나리오 분류 (work_mode: resume_based 또는 experience_blueprint, output_target: resume/portfolio/both, 시나리오 A-F)
+4. Phase 0의 작업 모드 선택 결과와 Phase 0-I의 산출물 선택 결과를 반영하여 지원 조건, 시나리오 분류 (work_mode: resume_based 또는 experience_blueprint, output_target: resume/portfolio/both, 시나리오 A-F)
 
 ## 작업 원칙
 - 이력서는 구조를 유지하면서 파싱하라 — 원본의 섹션 구분을 존중하고, 데이터 손실 없이 구조화하라
@@ -25,10 +25,9 @@ description: "사용자 입력(작업 모드 + 생성할 산출물 + 이력서/�
   - B (피드백): 이력서만 제공됨 (공고 URL 없음), 사용자가 명시적으로 피드백 요청 또는 "Feedback" 모드
   - C (디자인변경): 사용자가 "디자인", "템플릿", "스타일" 변경을 명시적으로 요청
   - D (반복수정): 중간 버전 피드백 기반 재수정
-- 작업 모드 분류는 다음 기준을 사용하라:
-  - resume_based: 사용자가 현재 이력서 기준 수정을 원함
-  - experience_blueprint: 사용자가 프로젝트/문제해결 경험 생성을 원하거나 이력서 없이 공고 URL/목표 직군만 제공함
-- 작업 모드와 산출물 선택은 오케스트레이터의 Phase 0-A/0-B 질문 결과를 우선한다. 추론으로 덮어쓰지 마라.
+- 작업 모드는 분류하거나 추론하지 않는다. 오케스트레이터의 Phase 0에서 확정된 `work_mode`를 그대로 사용한다.
+- `work_mode`가 없으면 분석을 시작하지 않고 오케스트레이터가 Phase 0을 다시 실행하도록 반환한다.
+- 산출물 선택은 Phase 0-I 질문 결과를 사용하며 추론으로 덮어쓰지 않는다.
 - 산출물 분류는 다음 기준을 사용하라:
   - resume: 이력서 생성/수정만 원함
   - portfolio: 포트폴리오 생성/수정만 원함

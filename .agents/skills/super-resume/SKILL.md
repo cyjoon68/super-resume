@@ -28,7 +28,7 @@ allowed-tools:
 ## Reference Files
 
 Reference files stay in this skill's local `references/` directory and are ignored by git.
-If the directory is missing or empty, tell the user:
+Do not inspect them until Phase 0 completes. In Phase 0-I, if the directory is missing or empty, tell the user:
 "스킬 폴더 안의 `references/`가 비어 있습니다. 이력서 작성 레퍼런스를 입력해 주시면 스킬 안의 `references/`에 저장하고 진행할 수 있고, 넣지 않고 바로 진행할 수도 있습니다."
 
 Open only the relevant reference files from this skill's `references/` directory.
@@ -37,7 +37,36 @@ If a needed reference file is missing, continue without it unless the user wants
 
 ---
 
-## Phase 0: 컨텍스트 확인
+## Phase 0: 작업 모드 선택
+
+이 Phase에서는 작업 모드만 결정한다. 입력 확인, 레퍼런스 조회, 산출물 선택, 추가 입력 수집, 분석은 시작하지 않는다.
+
+가능하면 Codex 질문 UI(`request_user_input`)로 다음 두 선택지만 표시한다. 사용할 수 없는 환경에서만 같은 문구를 일반 텍스트 질문으로 표시한다.
+
+```text
+질문: 어떤 방식으로 진행할까요?
+선택지:
+1. 현재 이력서 기준으로 공고에 맞춰 수정하기
+2. 이력서에 넣을 프로젝트/문제해결 경험까지 생성해서 진행하기
+```
+
+- **1번** → `work_mode: "resume_based"`
+- **2번** → `work_mode: "experience_blueprint"`
+- 사용자가 요청에서 방향을 이미 말했어도 선택 질문은 생략하지 않는다.
+- 사용자 응답 전에는 기본값을 정하거나 다음 Phase를 시작하지 않는다.
+- 응답이 모호하거나 두 선택지를 모두 포함하면 같은 질문을 다시 표시한다.
+
+### GATE: Phase 0 → Phase 0-I (작업 모드 확정)
+
+**대기:** 사용자 응답 필수
+
+**출력:** 확정된 `work_mode`
+
+---
+
+## Phase 0-I: 컨텍스트 확인 + 입력 수집
+
+확정된 `work_mode`가 없으면 입력 수집을 시작하지 않고 Phase 0으로 돌아간다.
 
 ```bash
 _WORKSPACE_DIR="_workspace"
@@ -54,43 +83,12 @@ mkdir -p "$_WORKSPACE_DIR"
 
 ### 사용자 입력 수집
 
-Phase 0은 반드시 두 단계로 나눈다.
+Phase 0-I는 Phase 0에서 작업 모드가 확정된 뒤에만 시작한다.
 선택 질문은 가능한 경우 Codex의 실제 질문 UI(`request_user_input`)로 표시한다.
 일반 텍스트 목록과 수동 응답 요청만으로 끝내지 않는다.
 `request_user_input`을 사용할 수 없는 환경에서만 동일한 문구를 일반 텍스트 질문으로 대체한다.
 
-#### Phase 0-A: 입력 확인 + 작업 모드 선택
-
-먼저 사용자가 제공한 입력을 짧게 확인하고, 같은 질문에서 작업 모드를 선택하게 한다.
-
-표시 형식:
-
-```text
-입력 확인:
-이력서: {resume_path_or_summary}
-포트폴리오: {portfolio_path_or_summary_or_없음}
-GitHub: {github_url_or_없음}
-공고: {job_url_or_target}
-
-모드 선택
-```
-
-Codex 질문 UI를 사용할 수 있으면 다음 구조로 질문한다:
-
-```text
-질문: 어떤 방식으로 진행할까요?
-선택지:
-1. 현재 이력서 기준으로 공고에 맞추기
-2. 이력서에 넣을 프로젝트/문제해결 경험 생성까지 같이 하기
-```
-
-- 1번 또는 "이력서 기준" → `work_mode: "resume_based"`
-- 2번, "프로젝트 경험 생성", "문제해결 경험 생성" → `work_mode: "experience_blueprint"`
-- 모드 선택 질문은 생략하지 않는다. 사용자가 이미 요청 방향을 말했어도 반드시 이 질문으로 `work_mode`를 확정한다.
-- 사용자 응답 전에는 `resume_based` 또는 `experience_blueprint`를 기본값으로 확정하지 않는다.
-- 이력서 없이 공고 URL/목표 직군만 제공하거나 프로젝트 기획을 요청한 경우에도, `experience_blueprint`를 추천할 수는 있지만 사용자 선택을 받아야 한다.
-
-#### Phase 0-Reference Gate: 레퍼런스 확인
+#### Phase 0-I-A: 레퍼런스 확인
 
 이 체크는 `SKILL.md`가 있는 스킬 폴더 기준으로 실행한다.
 
@@ -106,9 +104,9 @@ echo "HAS_REFERENCES: $_HAS_REFERENCES"
 - 사용자가 레퍼런스를 넣겠다고 하면 입력을 받아 `references/user-notes.md` 또는 사용자가 지정한 파일명으로 저장한다.
 - 사용자가 바로 진행하겠다고 하거나 명시하지 않으면, 레퍼런스 없이 기본 워크플로우로 진행한다.
 
-#### Phase 0-B: 생성할 산출물 선택
+#### Phase 0-I-B: 생성할 산출물 선택
 
-작업 모드가 정해진 뒤 별도 질문으로 생성할 산출물을 선택하게 한다.
+Phase 0에서 작업 모드가 정해진 뒤 별도 질문으로 생성할 산출물을 선택하게 한다.
 
 Codex 질문 UI를 사용할 수 있으면 다음 구조로 질문한다:
 
@@ -177,7 +175,7 @@ Codex 질문 UI를 사용할 수 있으면 다음 구조로 질문한다:
 
 ---
 
-### GATE: Phase 0 → Phase 1 (분석 시작 확인)
+### GATE: Phase 0-I → Phase 1 (분석 시작 확인)
 
 **시점:** 사용자 입력 수집 완료 후, 분석 시작 전
 
@@ -263,7 +261,7 @@ Codex 질문 UI를 사용할 수 있으면 다음 구조로 질문한다:
 
 ### Step 1-4: 시나리오 분류
 
-입력에 따라 작업 모드와 시나리오를 분류하고 `_workspace/01_scenario.json`에 저장:
+Phase 0에서 확정된 작업 모드를 유지하고, 입력에 따라 시나리오를 분류하여 `_workspace/01_scenario.json`에 저장:
 
 ```json
 {
@@ -1052,8 +1050,9 @@ Phase 3-A/3-B에서 콘텐츠 수정이 완료된 후, Fit Score를 재계산하
 
 | Phase | 입력 | 출력 | 사용자 질문 필수? |
 |-------|------|------|------------------|
-| Phase 0 | 사용자 입력 | `01_scenario.json` | ✅ Phase→1 GATE |
-| Phase 1 | Phase 0 출력 | `01_parsed_resume.json`, `01_job_analyses.json`, `01_github_findings.json` | ✅ Phase→2 GATE |
+| Phase 0 | 사용자 요청 | `work_mode` | ✅ Mode 선택 GATE |
+| Phase 0-I | `work_mode`, 사용자 입력 | `01_scenario.json` | ✅ Phase→1 GATE |
+| Phase 1 | Phase 0-I 출력 | `01_parsed_resume.json`, `01_job_analyses.json`, `01_github_findings.json` | ✅ Phase→2 GATE |
 | Phase 2 | Phase 1 출력 | `02_fit_score.json`, `02_strategy.json` 또는 `04_review_report.json` | ✅ Phase→3 GATE |
 | Phase 2-X | Phase 1 출력 + `work_mode: experience_blueprint` | `06_experience_blueprints/01_*.md` ... `04_*.md`, `06_experience_blueprints.json` | ✅ 기획서 선택 GATE |
 | Phase 3 | Phase 2 출력 | `03_draft_resume_v{N}.md` 또는 `03_draft_portfolio_v{N}.md`, `03_changelog_v{N}.json`, `03_fit_score_history.json` | ✅ 피드백 GATE + 점수향상 GATE |
@@ -1093,58 +1092,69 @@ Phase 3-A/3-B에서 콘텐츠 수정이 완료된 후, Fit Score를 재계산하
 
 ### 정상 흐름 (맞춤수정 + 점수 향상)
 1. 사용자: 이력서.md + 공고 URL 2개 제공
-2. → GATE: 분석 시작 확인
-3. → Fit Score 표시: ★★★★☆ 7.2/10, ★★★★★ 8.5/10
-4. → GATE: "수정할까요?" → Yes
-5. → GATE: "v1 초안을 작성할까요?" → Yes
-6. → v1 표시 → GATE: "마음에 드시나요?" → 피드백 → v2
-7. → GATE: "점수 향상을 진행할까요?" → Yes
-8. → 사이클 1: 키워드 집중 개선 → 7.8→8.4 (+0.6)
-9. → GATE: "계속 개선할까요?" → Yes
-10. → 사이클 2: 산업 도메인 보강 → 8.4→8.7 (+0.3)
-11. → GATE: "계속 개선할까요?" → "여기까지"
-12. → GATE: "품질 검증을 진행할까요?" → Yes
-13. → GATE: "디자인을 적용할까요?" → Yes
-14. → GATE: 템플릿 선택 → "모던"
-15. → GATE: "PDF로 출력할까요?" → Yes
-16. → GATE: "최종 결과를 확인하시겠어요?" → Yes
-17. → 변경사항 요약 + Fit Score 변화 (7.2→8.7, +1.5) + 개선 이력 + ATS 리포트
+2. → Phase 0 GATE: `resume_based` 선택
+3. → Phase 0-I 입력 수집
+4. → GATE: 분석 시작 확인
+5. → Fit Score 표시: ★★★★☆ 7.2/10, ★★★★★ 8.5/10
+6. → GATE: "수정할까요?" → Yes
+7. → GATE: "v1 초안을 작성할까요?" → Yes
+8. → v1 표시 → GATE: "마음에 드시나요?" → 피드백 → v2
+9. → GATE: "점수 향상을 진행할까요?" → Yes
+10. → 사이클 1: 키워드 집중 개선 → 7.8→8.4 (+0.6)
+11. → GATE: "계속 개선할까요?" → Yes
+12. → 사이클 2: 산업 도메인 보강 → 8.4→8.7 (+0.3)
+13. → GATE: "계속 개선할까요?" → "여기까지"
+14. → GATE: "품질 검증을 진행할까요?" → Yes
+15. → GATE: "디자인을 적용할까요?" → Yes
+16. → GATE: 템플릿 선택 → "모던"
+17. → GATE: "PDF로 출력할까요?" → Yes
+18. → GATE: "최종 결과를 확인하시겠어요?" → Yes
+19. → 변경사항 요약 + Fit Score 변화 (7.2→8.7, +1.5) + 개선 이력 + ATS 리포트
 
 ### 피드백 전용 흐름
 1. 사용자: 이력서.md만 제공
-2. → "피드백만 원하시나요?" → Yes
-3. → GATE: "분석을 시작할까요?" → Yes
-4. → GATE: "종합 피드백을 제공할까요?" → Yes
-5. → 피드백 리포트 표시
-6. → "이 피드백을 반영해서 수정할까요?" → Yes → 수정본
-7. → 이후 모든 GATE 순차 실행
+2. → Phase 0 GATE: `resume_based` 선택
+3. → Phase 0-I 입력 수집
+4. → "피드백만 원하시나요?" → Yes
+5. → GATE: "분석을 시작할까요?" → Yes
+6. → GATE: "종합 피드백을 제공할까요?" → Yes
+7. → 피드백 리포트 표시
+8. → "이 피드백을 반영해서 수정할까요?" → Yes → 수정본
+9. → 이후 모든 GATE 순차 실행
 
 ### 적합도 확인 흐름 (시나리오 E)
 1. 사용자: 이력서.md + 공고 URL
-2. → GATE: 분석 시작 확인 → Yes
-3. → Fit Score 표시 (별점 + 항목별 분석 + 강약점)
-4. → GATE: "이 공고에 맞춰서 수정할까요?"
-5. → No → Fit Score 리포트만 출력하고 종료
+2. → Phase 0 GATE: `resume_based` 선택
+3. → Phase 0-I 입력 수집
+4. → GATE: 분석 시작 확인 → Yes
+5. → Fit Score 표시 (별점 + 항목별 분석 + 강약점)
+6. → GATE: "이 공고에 맞춰서 수정할까요?"
+7. → No → Fit Score 리포트만 출력하고 종료
 
 ### 문제해결 프로젝트 기획 흐름
 1. 사용자: 공고 URL 또는 목표 직군 제공 + "프로젝트 문제해결 경험 생성해줘"
-2. → 시작 질문에서 `experience_blueprint` 선택
-3. → 공고 필수/우대 스택 분석
-4. → `서비스 맥락에서 발생하는 실제 문제 상황`과 `해결 방향` 정의
-5. → 공고 스택 기반 프로젝트 기획서 생성
-6. → 데이터 모델/API/화면/이벤트/측정 지표/테스트/배포/README/이력서 bullet 포함
-7. → `_workspace/06_experience_blueprints/01_*.md` ... `04_*.md`, `_workspace/06_experience_blueprints.json` 저장
-8. → GATE: "이 중 어떤 프로젝트를 우선 구현할까요?"
+2. → Phase 0 GATE에서 `experience_blueprint` 선택
+3. → Phase 0-I 입력 수집
+4. → 공고 필수/우대 스택 분석
+5. → `서비스 맥락에서 발생하는 실제 문제 상황`과 `해결 방향` 정의
+6. → 공고 스택 기반 프로젝트 기획서 생성
+7. → 데이터 모델/API/화면/이벤트/측정 지표/테스트/배포/README/이력서 bullet 포함
+8. → `_workspace/06_experience_blueprints/01_*.md` ... `04_*.md`, `_workspace/06_experience_blueprints.json` 저장
+9. → GATE: "이 중 어떤 프로젝트를 우선 구현할까요?"
 
 ### 디자인 변경 흐름
 1. 사용자: "디자인만 바꿔줘"
-2. → GATE: 템플릿 선택 → 선택
-3. → GATE: 디자인 확인 → "PDF로 출력할까요?" → Yes
-4. → 리디자인된 이력서 + PDF
+2. → Phase 0 GATE: `resume_based` 선택
+3. → Phase 0-I 입력 수집
+4. → GATE: 템플릿 선택 → 선택
+5. → GATE: 디자인 확인 → "PDF로 출력할까요?" → Yes
+6. → 리디자인된 이력서 + PDF
 
 ### 에러 흐름
-1. URL fetching 실패 (1개 성공, 1개 실패)
-2. → 성공한 URL로만 진행
-3. → Fit Score는 성공한 URL 기준으로만 계산
-4. → 최종 보고서에 실패 URL 포함하여 사용자에게 알림
-5. → 이후 모든 GATE는 정상 실행
+1. → Phase 0 GATE에서 작업 모드 선택
+2. → Phase 0-I 입력 수집
+3. URL fetching 실패 (1개 성공, 1개 실패)
+4. → 성공한 URL로만 진행
+5. → Fit Score는 성공한 URL 기준으로만 계산
+6. → 최종 보고서에 실패 URL 포함하여 사용자에게 알림
+7. → 이후 모든 GATE는 정상 실행

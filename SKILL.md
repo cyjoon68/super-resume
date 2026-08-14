@@ -24,8 +24,10 @@ allowed-tools:
 워크플로우의 전체 흐름을 제어하며, 실제 작업은 개별 스킬이 수행한다.
 
 ```
-Phase 0           →  .agents/skills/input-collector/SKILL.md
-    │ GATE: Phase 0 → Phase 1
+Phase 0           →  작업 모드 선택 (오케스트레이터 직접 수행)
+    │ GATE: work_mode 확정
+Phase 0-I         →  .agents/skills/input-collector/SKILL.md
+    │ GATE: Phase 0-I → Phase 1
 Phase 1           →  resume-parser / github-explorer / job-analyzer
     │ GATE: Phase 1 → Phase 2
 Phase 2           →  .agents/skills/content-strategy/SKILL.md
@@ -52,7 +54,7 @@ Phase 6           →  .agents/skills/result-presenter/SKILL.md
 ## Reference Files
 
 Reference files stay in this skill's local `references/` directory and are ignored by git.
-Before Phase 0 begins, load every file in `references/`.
+After Phase 0 completes and before Phase 0-I begins, load every file in `references/`.
 Each loaded file must be applied during the relevant Phase as specified below.
 
 ```bash
@@ -71,14 +73,41 @@ Mapping:
 If a reference file cannot be read, report the path and continue.
 
 ---
-## Phase 0: 컨텍스트 확인 + 입력 수집
+## Phase 0: 작업 모드 선택
 
-`.agents/skills/input-collector/SKILL.md`를 참조하여 작업 모드, 산출물, 입력 자료를 수집한다.
+이 Phase에서는 작업 모드만 결정한다. 입력 확인, 레퍼런스 조회, 산출물 선택, 추가 입력 수집, 분석은 시작하지 않는다.
+
+가능하면 Codex 질문 UI(`request_user_input`)로 다음 두 선택지만 표시한다. 사용할 수 없는 환경에서만 같은 문구를 일반 텍스트 질문으로 표시한다.
+
+```text
+질문: 어떤 방식으로 진행할까요?
+선택지:
+1. 현재 이력서 기준으로 공고에 맞춰 수정하기
+2. 이력서에 넣을 프로젝트/문제해결 경험까지 생성해서 진행하기
+```
+
+- **1번** → `work_mode: "resume_based"`
+- **2번** → `work_mode: "experience_blueprint"`
+- 사용자가 요청에서 방향을 이미 말했어도 선택 질문은 생략하지 않는다.
+- 사용자 응답 전에는 기본값을 정하거나 다음 Phase를 시작하지 않는다.
+- 응답이 모호하거나 두 선택지를 모두 포함하면 같은 질문을 다시 표시한다.
+
+### GATE: Phase 0 → Phase 0-I (작업 모드 확정)
+
+**대기:** 사용자 응답 필수
+
+**출력:** 확정된 `work_mode`
+
+---
+## Phase 0-I: 컨텍스트 확인 + 입력 수집
+
+`.agents/skills/input-collector/SKILL.md`에 확정된 `work_mode`를 전달하여 산출물과 입력 자료를 수집한다.
+`work_mode`가 없으면 입력 수집을 시작하지 않고 Phase 0으로 돌아간다.
 `_workspace/01_scenario.json`이 생성된다.
 
 ---
 
-### GATE: Phase 0 → Phase 1 (분석 시작 확인)
+### GATE: Phase 0-I → Phase 1 (분석 시작 확인)
 
 **시점:** 사용자 입력 수집 완료 후, 분석 시작 전
 
@@ -131,7 +160,7 @@ If a reference file cannot be read, report the path and continue.
 
 ### Step 1-4: 시나리오 분류
 
-입력에 따라 작업 모드와 시나리오를 분류하고 `_workspace/01_scenario.json`에 저장한다.
+Phase 0에서 확정된 작업 모드를 유지하고, 입력에 따라 시나리오를 분류하여 `_workspace/01_scenario.json`에 저장한다.
 
 ### 예외 처리: URL에서 읽을 수 없는 섹션이 있는 경우
 
@@ -416,8 +445,9 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 | Phase | 입력 | 출력 |
 |-------|------|------|
-| Phase 0 | 사용자 입력 | `01_scenario.json` |
-| Phase 1 | Phase 0 출력 | `01_parsed_resume.json`, `01_job_analyses.json`, `01_github_findings.json` |
+| Phase 0 | 사용자 요청 | `work_mode` |
+| Phase 0-I | `work_mode`, 사용자 입력 | `01_scenario.json` |
+| Phase 1 | Phase 0-I 출력 | `01_parsed_resume.json`, `01_job_analyses.json`, `01_github_findings.json` |
 | Phase 2 | Phase 1 출력 | `02_fit_score.json`, `02_strategy.json` |
 | Phase 2-X | Phase 1 출력 | `06_experience_blueprints/`, `06_experience_blueprints.json` |
 | Phase 3 | Phase 2 출력 | `03_draft_resume_v{N}.md`, `03_changelog_v{N}.json`, `03_fit_score_history.json` |
