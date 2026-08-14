@@ -1,6 +1,6 @@
 # Super Resume Agent Instructions
 
-Use this workflow when the user asks to create, revise, review, score, design, or publish a resume or portfolio, especially for a specific job posting.
+Use this workflow when the user asks to create, revise, review, score, design, or publish a resume, portfolio, or self-introduction, especially for a specific job posting.
 
 ## Entry
 
@@ -30,5 +30,5 @@ If the user continues without references, run the built-in workflow.
 
 - Do not skip GATE steps in `SKILL.md`.
 - Do not treat unfinished projects as completed resume experience.
-- Keep generated claims backed by the user's resume, portfolio, GitHub, or stated project evidence.
+- Keep generated claims backed by the user's resume, portfolio, GitHub, or stated project evidence; self-introductions require the same evidence.
 - Use job-posting requirements before personal stack preference when creating project blueprints.

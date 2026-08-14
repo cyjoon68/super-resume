@@ -11,7 +11,7 @@
 
 ## Description
 
-Super Resume is a Codex workflow plugin that reads a user's resume, portfolio, GitHub evidence, and job posting, then guides job-fit analysis, resume/portfolio revision, project experience planning, design review, and PDF output.
+Super Resume is a Codex workflow plugin that reads a user's resume, portfolio, GitHub evidence, and job posting, then guides job-fit analysis, resume/portfolio/self-introduction revision, project experience planning, design review, and per-output PDF export.
 
 ## Capabilities
 
@@ -30,7 +30,7 @@ Use $super-resume to tailor my resume to this frontend engineer job posting.
 Expected:
 
 - Ask which mode to use before proceeding.
-- Ask what output to create: resume, portfolio, or both.
+- Ask independently whether to create a resume, portfolio, and self-introduction.
 - Analyze job-fit evidence before drafting.
 
 ```text
@@ -55,4 +55,4 @@ Expected:
 
 ## Review notes
 
-The plugin is intended for user-controlled resume and portfolio drafting. It should not represent unfinished project plans as completed experience. The workflow includes explicit gates before drafting, project implementation, design/PDF output, and finalization.
+The plugin is intended for user-controlled resume, portfolio, and self-introduction drafting. It should not represent unfinished project plans as completed experience. Self-introduction sections require job and evidence grounding. The workflow includes explicit gates before drafting, project implementation, design/PDF output, and finalization.

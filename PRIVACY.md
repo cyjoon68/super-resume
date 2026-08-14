@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Super Resume is a Codex workflow plugin for resume, portfolio, GitHub, and job-posting analysis.
+Super Resume is a Codex workflow plugin for resume, portfolio, self-introduction, GitHub, and job-posting analysis.
 
 The plugin does not run its own server, does not include an MCP server, and does not collect, store, sell, or share user data outside the user's Codex environment.
 

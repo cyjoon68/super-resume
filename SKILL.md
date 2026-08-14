@@ -1,7 +1,7 @@
 ---
 name: super-resume
 description: >
-  Super Resume. 공고 기준으로 이력서/포트폴리오를 맞춤 수정하거나,
+  Super Resume. 공고 기준으로 이력서/포트폴리오/자기소개서를 맞춤 수정하거나,
   이력서에 반영 가능한 문제해결 프로젝트 기획서를 생성하는 워크플로우 오케스트레이터.
   "super-resume", "Super Resume", "슈퍼 이력서", "resume-creator", "이력서 만들어줘",
   "이력서 수정해줘", "공고에 맞춰줘", "프로젝트 경험 생성해줘",
@@ -26,27 +26,28 @@ allowed-tools:
 ```
 Phase 0           →  작업 모드 선택 (오케스트레이터 직접 수행)
     │ GATE: work_mode 확정
-Phase 0-I         →  .agents/skills/input-collector/SKILL.md
+Phase 0-I         →  skills/input-collector/SKILL.md
     │ GATE: Phase 0-I → Phase 1
 Phase 1           →  resume-parser / github-explorer / job-analyzer
     │ GATE: Phase 1 → Phase 2
-Phase 2           →  .agents/skills/content-strategy/SKILL.md
+Phase 2           →  skills/content-strategy/SKILL.md
     │
     ├─ [resume_based] ──────────────────────────→ Phase 3
     │
     └─ [experience_blueprint]
-         ├─ Phase 2-X Approach → .agents/skills/approach-selector/SKILL.md
-         └─ Phase 2-X         → .agents/skills/blueprint-generator/SKILL.md
+         ├─ Phase 2-X Approach → skills/approach-selector/SKILL.md
+         └─ Phase 2-X         → skills/blueprint-generator/SKILL.md
+             └─ 구현·완료 기준 검증 → Phase 2 전략 → 선택 산출물 작성
     │
     │ GATE: Phase 2 → Phase 3
-Phase 3           →  .agents/skills/content-craft/SKILL.md
-Phase 3-C         →  .agents/skills/score-booster/SKILL.md (조건부)
+Phase 3           →  skills/content-craft/SKILL.md
+Phase 3-C         →  skills/score-booster/SKILL.md (조건부)
     │ GATE: Phase 3 → Phase 4
 Phase 4           →  quality-review / resume-designer
     │ GATE: Phase 4 → Phase 5
 Phase 5           →  pdf-publisher
     │ GATE: Phase 5 → Phase 6
-Phase 6           →  .agents/skills/result-presenter/SKILL.md
+Phase 6           →  skills/result-presenter/SKILL.md
 ```
 
 ---
@@ -101,9 +102,13 @@ If a reference file cannot be read, report the path and continue.
 ---
 ## Phase 0-I: 컨텍스트 확인 + 입력 수집
 
-`.agents/skills/input-collector/SKILL.md`에 확정된 `work_mode`를 전달하여 산출물과 입력 자료를 수집한다.
+`skills/input-collector/SKILL.md`에 확정된 `work_mode`를 전달하여 산출물과 입력 자료를 수집한다.
 `work_mode`가 없으면 입력 수집을 시작하지 않고 Phase 0으로 돌아간다.
 `_workspace/01_scenario.json`이 생성된다.
+
+- 산출물은 비어 있지 않은 `output_targets: ["resume" | "portfolio" | "cover_letter"]` 배열로 저장한다.
+- 이전 실행의 `output_target`은 재개 시 배열로 변환한다.
+- 자기소개서 선택 시 공고 자료/목표 직군과 실제 경험 근거가 있는지 확인한다.
 
 ---
 
@@ -126,9 +131,9 @@ If a reference file cannot be read, report the path and continue.
 
 ### Step 1-1: 이력서 파싱 (이력서가 제공된 경우)
 
-1. `.agents/skills/resume-parser/SKILL.md`를 참조하여 이력서 파싱 절차 수행
+1. `skills/resume-parser/SKILL.md`를 참조하여 이력서 파싱 절차 수행
 2. 제공된 이력서 파일/텍스트를 파싱하여 구조화된 데이터로 변환
-3. 입력이 PDF이면 `opendataloader-pdf`가 사용 가능한지 먼저 확인하고, 있으면 이를 우선 사용해 텍스트/구조/링크를 추출한다. 없거나 실패하면 `.agents/skills/resume-parser/SKILL.md`의 PDF fallback 절차를 따른다.
+3. 입력이 PDF이면 `opendataloader-pdf`가 사용 가능한지 먼저 확인하고, 있으면 이를 우선 사용해 텍스트/구조/링크를 추출한다. 없거나 실패하면 `skills/resume-parser/SKILL.md`의 PDF fallback 절차를 따른다.
 4. 입력이 PDF이면 텍스트 추출과 별도로 hyperlink annotation/link target을 추출하여 `_workspace/01_extracted_links.json`에 저장
 5. 이력서 텍스트 또는 PDF annotation에서 GitHub 프로필 URL과 레포 URL을 추출하여 `personal_info.github`, `personal_info.links`, `projects[].url`에 저장
 6. 이력서에 `GitHub`, `Github`, `깃허브`, `Git Hub` 같은 항목은 있으나 텍스트와 PDF annotation 어디에도 실제 URL이 없으면 `missing_inputs.github_url: true`와 `personal_info.github_label_present: true`로 기록
@@ -140,7 +145,7 @@ If a reference file cannot be read, report the path and continue.
 
 > 이력서 없이 GitHub 링크만 제공된 경우, 이 Step으로 건너뛴다.
 
-1. `.agents/skills/github-explorer/SKILL.md`를 참조하여 GitHub 경험 수집 절차 수행
+1. `skills/github-explorer/SKILL.md`를 참조하여 GitHub 경험 수집 절차 수행
 2. 출력: `_workspace/01_parsed_resume.json` (GitHub 기반), `_workspace/01_original_resume.md` (비어있거나 GitHub 요약)
 
 ### Step 1-2A: GitHub 링크 누락 확인 (GitHub 항목만 있는 경우)
@@ -150,13 +155,14 @@ If a reference file cannot be read, report the path and continue.
 
 ### Step 1-2: GitHub 저장소 탐색 (이력서에 GitHub 링크가 있을 경우)
 
-1. `.agents/skills/github-explorer/SKILL.md`를 참조하여 GitHub 저장소 탐색 절차 수행
+1. `skills/github-explorer/SKILL.md`를 참조하여 GitHub 저장소 탐색 절차 수행
 2. 출력: `_workspace/01_github_findings.json`
 
-### Step 1-3: 공고 URL 분석 (있을 경우)
+### Step 1-3: 공고 자료 분석 (있을 경우)
 
-1. `.agents/skills/job-analyzer/SKILL.md`를 참조하여 공고 분석 절차 수행
-2. 출력: `_workspace/01_job_analyses.json`, `_workspace/01_job_raw/`
+1. `skills/job-analyzer/SKILL.md`를 참조하여 공고 분석 절차 수행
+2. URL, Markdown/PDF, 직접 텍스트를 분석해 요구사항과 `application_questions`를 출력한다.
+3. 출력: `_workspace/01_job_analyses.json`, `_workspace/01_job_raw/`
 
 ### Step 1-4: 시나리오 분류
 
@@ -174,7 +180,7 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 **질문 (시나리오별):**
 - **work_mode = experience_blueprint:** "이 기준으로 문제해결 프로젝트 기획서를 생성할까요?"
-- **시나리오 A/E:** Fit Score를 계산하여 표시한 후 "이 공고에 맞춰서 이력서를 수정할까요?"
+- **시나리오 A/E:** Fit Score를 계산하여 표시한 후 "이 공고에 맞춰서 선택한 산출물을 수정할까요?"
 - **시나리오 B:** "종합 피드백을 제공할까요?"
 - **시나리오 C:** (디자인 변경 — 전략 생략, 바로 디자인 GATE로)
 - **시나리오 F:** "이제 어떻게 진행할까요?"
@@ -195,13 +201,13 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 > `work_mode: "experience_blueprint"`일 때만 실행한다. Phase 2-X 직전에 접근 방식을 결정한다.
 
-`.agents/skills/approach-selector/SKILL.md`를 참조하여 접근 방식 선택을 진행한다.
+`skills/approach-selector/SKILL.md`를 참조하여 접근 방식 선택을 진행한다.
 
 ### Phase 2-X Validation: 접근 방식 검증
 
 > Phase 2-X Approach에서 선택한 병목/제약과 문제 예방 카테고리가 실제 이력서/포트폴리오에 도움이 되는지 검증한다.
 
-`.agents/skills/bottleneck-validator/SKILL.md`를 참조하여 5가지 기준(Relevance, Impact, Feasibility, Completeness, Gap Closure)으로 평가한다.
+`skills/bottleneck-validator/SKILL.md`를 참조하여 5가지 기준(Relevance, Impact, Feasibility, Completeness, Gap Closure)으로 평가한다.
 
 결과는 `_workspace/04_validation_report.json`에 저장한다.
 
@@ -254,7 +260,7 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 > `work_mode: "experience_blueprint"`일 때 실행한다.
 
-1. `.agents/skills/blueprint-generator/SKILL.md`를 참조하여 공고 기반 문제해결 프로젝트 기획서 4개를 생성한다.
+1. `skills/blueprint-generator/SKILL.md`를 참조하여 공고 기반 문제해결 프로젝트 기획서 4개를 생성한다.
 2. Phase 2-X Approach에서 선택한 병목 레벨과 예방 카테고리를 각 기획서에 반영한다.
 3. 각 기획서는 별도 md 파일로 `_workspace/06_experience_blueprints/`에 저장한다.
 4. 메타데이터는 `_workspace/06_experience_blueprints.json`에 저장한다.
@@ -263,7 +269,7 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 > 생성된 각 기획서의 병목/제약과 문제 예방이 포트폴리오 가치가 있는지 개별 검증한다.
 
-`.agents/skills/bottleneck-validator/SKILL.md`를 참조하여 각 기획서를 5가지 기준으로 평가한다.
+`skills/bottleneck-validator/SKILL.md`를 참조하여 각 기획서를 5가지 기준으로 평가한다.
 
 **분기:**
 - **✅ 전체 통과** → GATE: 결과 제공으로 진행
@@ -320,18 +326,26 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 - **수정 요청** → 어떤 병목/제약을 다르게 해결할지 확인한 뒤 반영한다.
 - **거절/보류** → 병목/제약은 남겨두고 현재 구현 상태와 남은 TODO를 기록한다.
 
+### 구현 완료 후 선택 산출물 작성
+
+선택한 프로젝트가 기획서의 완료 기준을 충족하고 테스트/측정 근거가 확인된 경우에만:
+
+1. 검증된 프로젝트 결과를 실제 경험 근거로 `_workspace/01_parsed_resume.json`에 반영한다.
+2. `output_targets`에 산출물이 있으면 Phase 2 컨텐츠 전략으로 돌아간다.
+3. 기획서만 있거나 완료 기준을 충족하지 못했으면 이력서, 포트폴리오, 자기소개서를 작성하지 않는다.
+
 ### 공통: Fit Score 표시 (이력서 + 공고 URL이 있을 때)
 
 시나리오 A/E 모두에서, Phase 2 진입 시 반드시 Fit Score를 먼저 계산하여 사용자에게 보여준다.
 
-1. `.agents/skills/content-strategy/SKILL.md`를 참조하여 Step 2(적합도 산정)까지 실행
+1. `skills/content-strategy/SKILL.md`를 참조하여 Step 2(적합도 산정)까지 실행
 2. GitHub 탐색 결과가 있으면 Fit Score 산정에 반영
 
 ### 시나리오 A (맞춤수정)
 - Fit Score 표시 후 GATE: "수정할까요?" → Yes → Phase 2 전략 수립
 
 ### 시나리오 B (피드백)
-- `.agents/skills/quality-review/SKILL.md`를 참조하여 종합 피드백 생성
+- `skills/quality-review/SKILL.md`를 참조하여 종합 피드백 생성
 - GATE: "피드백을 반영해서 수정할까요?" → Yes → Phase 3-B
 
 ### 시나리오 C (디자인변경)
@@ -350,6 +364,15 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ### GATE: Phase 2 → Phase 3 (초안 작성 확인)
 
+`cover_letter`가 선택된 경우, 질문 전에 다음을 보여준다:
+
+- 카테고리와 소제목
+- 공고 문항/요구사항 근거
+- 실제 경험 근거
+- 섹션별 글자 수
+
+그리고 "이 카테고리로 작성할까요? 지원동기·입사 후 기여를 포함할까요?"를 묻는다. 사용자의 수정 또는 포함 여부를 `02_strategy.json.cover_letter.sections`에 반영한 뒤에만 초안을 작성한다.
+
 **질문 (시나리오별):**
 - **시나리오 A/D:** 전략 수립 완료 후 "전략대로 초안을 작성할까요?"
 - **시나리오 B:** "피드백 리포트를 제공할까요?"
@@ -361,9 +384,9 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ### Phase 3-A: 맞춤수정 컨텐츠 작성
 
-1. `.agents/skills/content-craft/SKILL.md`를 참조하여 컨텐츠 작성 절차 수행
+1. `skills/content-craft/SKILL.md`를 참조하여 컨텐츠 작성 절차 수행
 2. 전략 + 말투에 따라 선택된 산출물 내용 작성
-3. 출력: `_workspace/03_draft_resume_v1.md` 또는 `_workspace/03_draft_portfolio_v1.md`
+3. 출력: 선택한 `_workspace/03_draft_resume_v1.md`, `_workspace/03_draft_portfolio_v1.md`, `_workspace/03_draft_cover_letter_v1.md`
 
 ### GATE: Phase 3-A 피드백 (중간 버전 검토)
 
@@ -375,10 +398,12 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ### Phase 3-B: 피드백 반영 수정 (시나리오 B 후속)
 
-1. `.agents/skills/content-craft/SKILL.md`를 참조하여 피드백 반영 수정
+1. `skills/content-craft/SKILL.md`를 참조하여 피드백 반영 수정
 2. 중간 버전 표시 및 피드백 수렴 (Phase 3-A와 동일)
 
 ### GATE: Phase 3 → 점수 향상 (Phase 3-C 진입 결정)
+
+`output_targets`가 `["cover_letter"]`이면 Fit Score 개선 GATE를 생략하고 Phase 4로 이동한다.
 
 **질문:** "Fit Score가 X.X/10입니다. 점수 향상을 진행할까요?"
 - 8.0 미만: "약점을 집중 개선할까요?"
@@ -388,7 +413,7 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ### Phase 3-C: 점수 향상 루프 (조건부)
 
-`.agents/skills/score-booster/SKILL.md`를 참조하여 Fit Score 8.0 달성을 위한 반복 개선을 수행한다.
+`skills/score-booster/SKILL.md`를 참조하여 Fit Score 8.0 달성을 위한 반복 개선을 수행한다.
 
 ---
 
@@ -406,8 +431,9 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ### Phase 4-A: 품질 검증
 
-1. `.agents/skills/quality-review/SKILL.md`를 참조하여 품질 검증 절차 수행
+1. `skills/quality-review/SKILL.md`를 참조하여 품질 검증 절차 수행
 2. P0 이슈 자동 수정
+3. `_workspace/04_review_report.json.outputs`와 산출물별 `_workspace/04_corrected_{resume|portfolio|cover_letter}.md`를 저장
 
 ### GATE: Phase 4-A → Phase 4-B (디자인 적용 확인)
 
@@ -415,8 +441,9 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ### Phase 4-B: 디자인 적용
 
-1. `.agents/skills/resume-designer/SKILL.md`를 참조하여 디자인 적용 절차 수행
+1. `skills/resume-designer/SKILL.md`를 참조하여 디자인 적용 절차 수행
 2. 템플릿 선택 옵션 제공
+3. 하나의 선택 템플릿을 모든 산출물에 적용한다. 자기소개서는 프로필 이미지 없이 제목·소제목·본문 중심으로 저장한다.
 
 ### GATE: Phase 4-B → Phase 5 (PDF 출력 확인)
 
@@ -426,8 +453,8 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ## Phase 5: PDF 출력
 
-1. `.agents/skills/pdf-publisher/SKILL.md`를 참조하여 PDF 출력 절차 수행
-2. 출력: `_workspace/05_final_resume.pdf`
+1. `skills/pdf-publisher/SKILL.md`를 참조하여 PDF 출력 절차 수행
+2. 선택한 최종 Markdown을 각각 `_workspace/05_final_{resume|portfolio|cover_letter}.pdf`로 출력
 
 ### GATE: Phase 5 → Phase 6 (최종 결과 확인)
 
@@ -437,7 +464,7 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 
 ## Phase 6: 최종 결과 제공
 
-`.agents/skills/result-presenter/SKILL.md`를 참조하여 최종 결과를 제공한다.
+`skills/result-presenter/SKILL.md`를 참조하여 최종 결과를 제공한다.
 
 ---
 
@@ -446,13 +473,13 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 | Phase | 입력 | 출력 |
 |-------|------|------|
 | Phase 0 | 사용자 요청 | `work_mode` |
-| Phase 0-I | `work_mode`, 사용자 입력 | `01_scenario.json` |
-| Phase 1 | Phase 0-I 출력 | `01_parsed_resume.json`, `01_job_analyses.json`, `01_github_findings.json` |
-| Phase 2 | Phase 1 출력 | `02_fit_score.json`, `02_strategy.json` |
-| Phase 2-X | Phase 1 출력 | `06_experience_blueprints/`, `06_experience_blueprints.json` |
-| Phase 3 | Phase 2 출력 | `03_draft_resume_v{N}.md`, `03_changelog_v{N}.json`, `03_fit_score_history.json` |
-| Phase 4 | Phase 3 출력 | `04_review_report.json`, `04_corrected_content.md`, `05_final_resume.md` |
-| Phase 5 | Phase 4 출력 | `05_final_resume.pdf` |
+| Phase 0-I | `work_mode`, 사용자 입력 | `01_scenario.json` (`output_targets`) |
+| Phase 1 | Phase 0-I 출력 | `01_parsed_resume.json`, `01_job_analyses.json` (`application_questions`), `01_github_findings.json` |
+| Phase 2 | Phase 1 출력 | `02_fit_score.json`, `02_strategy.json` (`cover_letter.sections`) |
+| Phase 2-X | Phase 1 출력 | `06_experience_blueprints/`, `06_experience_blueprints.json`, 완료 후 검증된 경험 근거 |
+| Phase 3 | Phase 2 출력 | `03_draft_{resume|portfolio|cover_letter}_v{N}.md`, `03_changelog_v{N}.json` (`outputs`) |
+| Phase 4 | Phase 3 출력 | `04_review_report.json` (`outputs`), `04_corrected_{target}.md`, `05_final_{target}.md` |
+| Phase 5 | Phase 4 출력 | `05_final_{target}.pdf` |
 
 ## 에러 핸들링
 
@@ -463,6 +490,7 @@ Phase 1 완료 후 `01_scenario.json`에 `fetch_warnings`가 있으면 사용자
 | URL fetch 실패 | 실패한 URL 건너뛰고 나머지로 진행, 사용자에게 보고 |
 | PDF 생성 실패 | 마크다운만 제공, 대체 방법 안내 |
 | 데이터 충돌 | 출처 병기, 삭제 금지, 보고서에 상충 표시 |
+| 자기소개서 근거 부족 | 초안 없이 실제 경험 자료를 요청 |
 | **GATE 무시** | **GATE에서 사용자 응답을 받지 않고 다음 Phase로 진행하지 마라. 사용자 응답이 없으면 다시 질문하라.** |
 
 ## GATE 실행 규칙 (필수)

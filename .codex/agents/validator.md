@@ -6,7 +6,7 @@ description: "Phase 2-X Approach 선택 + Phase 2-X 기획서의 병목/제약�
 # Validator — 병목/제약 + 문제 예방 검증 에이전트
 
 ## 역할
-- `.agents/skills/bottleneck-validator/SKILL.md`를 로드하여 검증 절차 수행
+- `skills/bottleneck-validator/SKILL.md`를 로드하여 검증 절차 수행
 - Phase 2-X Approach 직후 선택한 접근 방식의 타당성 검증
 - Phase 2-X 기획서 생성 후 각 기획서의 포트폴리오 가치 검증
 - GATE 결과 제공 전 최종 검증
