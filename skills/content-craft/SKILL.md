@@ -81,10 +81,10 @@ description: >
 
 | 항목 | 규칙 |
 |------|------|
-| 동작 방식 | `_workspace/01_tone_profile.json`의 분석 결과를 기반으로 원본 말투를 모방 |
+| 동작 방식 | `_workspace/01_tone_profile.json`과 plugin `references/writing-voice.md`를 함께 적용. 충돌 시 writing-voice가 우선 |
 | 분석 대상 | 문장 길이, 동사 선택 패턴, 형용사 사용 빈도, 수동태/능동태 비율, 전문 용어 사용 수준 |
-| 어조 | 원본 그대로 — 사용자의 자연스러운 글쓰기 스타일을 유지 |
-| 주의 | `_workspace/01_tone_profile.json`이 없으면 `"professional"`로 폴백 |
+| 어조 | 원본 그대로 — 사용자의 자연스러운 글쓰기 스타일을 유지. 경험 본문은 `했습니다` |
+| 주의 | `_workspace/01_tone_profile.json`이 없으면 `"professional"`로 폴백하되 writing-voice 금지는 그대로 적용 |
 
 ## 워크플로우
 ### Step 0: 말투(Tone) 읽기
@@ -119,6 +119,7 @@ tone이 `"preserve"`이면 아래 프로세스를 실행한다:
 5. 새로운 내용을 추가할 때도 원본 말투와 일관성을 유지하라
 6. **원본의 오타나 비문법적 표현은 교정하되, 말투 특성(짧은 문장, 특정 동사 선호 등)은 유지하라**
 7. 말투 프로필을 `_workspace/03_tone_applied.json`에 저장
+8. plugin `references/writing-voice.md`를 읽고 금지 항목과 자기소개서 문장 구조를 덮어쓴다. 원본 말투보다 writing-voice가 우선한다
 
 ### Step 1: 원본 복사 및 전략 적용
 1. `_workspace/01_scenario.json`의 `output_targets`를 확인한다.
@@ -144,6 +145,7 @@ tone이 `"preserve"`이면 아래 프로세스를 실행한다:
 {문제/상황 → 본인 행동 → 결과/배운 점 → 공고 업무 기여}
 ```
 
+0. plugin `references/writing-voice.md`의 자기소개서 문장 구조를 따른다. 결과를 먼저 두고, `문제는 ~였습니다. 이를 해결하기 위해 ~했습니다`로 쓴다. 소제목은 명사구다.
 1. 섹션마다 소제목 1개와 본문 1개를 작성한다.
 2. 본문은 `target_chars`를 따른다. 제한이 없으면 공백 포함 약 500자다.
 3. `evidence_refs`로 확인되는 사실, 수치, 완료 상태만 작성한다.
@@ -192,6 +194,7 @@ tone이 `"preserve"`이면 아래 프로세스를 실행한다:
 - **완료 전 프로젝트를 완료 경험처럼 쓰지 마라** — experience blueprint에서 나온 문장은 실제 구현/측정 전에는 "완성 후 사용할 수 있는 bullet"로만 제공하라
 - **지원 조건을 누락하지 마라** — `candidate_notes.military_service`에 `산업기능요원 보충역` 같은 값이 있으면 최종 산출물에 유지하라
 - **자기소개서를 일반론으로 쓰지 마라** — 공고 요구사항과 `evidence_refs`를 연결한 경험 설명만 작성하라
+- **writing-voice를 지켜라** — plugin `references/writing-voice.md`의 금지와 문장 구조를 위반하지 마라. 가운데점 `·`, `~인지도` 나열, 현재형 원칙문을 쓰지 마라
 
 ## 검증
 - [ ] 모든 변경사항이 전략과 일치하는가?
@@ -205,3 +208,4 @@ tone이 `"preserve"`이면 아래 프로세스를 실행한다:
 - [ ] 자기소개서 선택 시 소제목과 본문 N개가 모두 저장되었는가?
 - [ ] 자기소개서 본문이 문항 제한 또는 기본 500자 기준을 지키는가?
 - [ ] 자기소개서의 사실·수치·완료 상태가 `evidence_refs`로 확인되는가?
+- [ ] `references/writing-voice.md` 검증 항목을 통과하는가?

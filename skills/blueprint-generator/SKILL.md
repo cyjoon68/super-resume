@@ -18,8 +18,10 @@ allowed-tools:
 > `work_mode: "experience_blueprint"`일 때 실행한다. 기존 이력서 맞춤 수정 Phase를 건너뛰고,
 공고 적합도를 높일 수 있는 프로젝트 기획서를 생성한다.
 
+`references/` 경로는 플러그인 루트 `<plugin-root>/references/`다. 사용자 워크스페이스의 `references/`는 쓰지 않는다.
+
 1. 사용자가 제공한 관련 `references/` 파일이 있으면 열고 원칙을 적용한다.
-2. 공고 URL이 있으면 `../job-analyzer/SKILL.md`로 공고의 필수/우대 스택, 서비스 도메인, 업무 맥락, 평가 키워드를 추출한다.
+2. 공고 URL이 있으면 `super-resume:job-analyzer`로 공고의 필수/우대 스택, 서비스 도메인, 업무 맥락, 평가 키워드를 추출한다.
 3. 공고 URL이 없으면 사용자가 제공한 목표 직군/회사/도메인 정보를 기준으로 삼는다.
 4. `references/experience-blueprints.md`를 참조하여 블루프린트 구조를 결정한다.
 5. 아래 원칙에 따라 프로젝트 기획서 4개 생성:

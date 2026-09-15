@@ -70,6 +70,7 @@ Mapping:
 - `experience-blueprints.md` → blueprint-generator (기획)
 - `portfolio.md` → content-crafter (포트폴리오 작성)
 - `projects.md` → content-crafter (프로젝트 설명), content-strategist (평가)
+- `writing-voice.md` → content-crafter (작성), quality-reviewer (검증)
 
 If a reference file cannot be read, report the path and continue.
 

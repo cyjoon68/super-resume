@@ -52,7 +52,7 @@ Phase 3-A/3-B에서 콘텐츠 수정이 완료된 후, Fit Score를 재계산하
 
 ## Step 1: Fit Score 재계산
 
-1. `../content-strategy/SKILL.md`를 참조하여 Step 2(적합도 산정)만 실행
+1. `super-resume:content-strategy`를 참조하여 Step 2(적합도 산정)만 실행
 2. 현재 초안 기준으로 Fit Score 재계산
 
 ## Step 2: 점수 향상 수행 (매 사이클 사용자 선택)
@@ -66,7 +66,7 @@ Phase 3-A/3-B에서 콘텐츠 수정이 완료된 후, Fit Score를 재계산하
 2. **원인 분석:** 왜 이 차원의 점수가 낮은지 구체적 근거 파악
    - 예: "키워드 밀도 6.0/10 → 공고에 'Kafka'가 필수인데 이력서에 없음"
 3. **집중 개선:** 식별된 약점만 타겟팅하여 콘텐츠 수정
-   - `../content-craft/SKILL.md`를 참조하여 특정 섹션만 수정 지시
+   - `super-resume:content-craft`를 참조하여 특정 섹션만 수정 지시
    - 수정 범위를 최소화하라 — 관련 없는 부분은 건드리지 않는다
 4. **Fit Score 재계산**
 5. **사용자에게 진행 상황 표시:**

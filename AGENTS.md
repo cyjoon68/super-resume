@@ -16,7 +16,7 @@ If your agent does not support a Codex-specific tool name, use the equivalent na
 
 ## References
 
-Local references are optional. They live in `references/`, which is ignored by git.
+Local references live in `references/`. `references/writing-voice.md` is required for content-craft and quality-review.
 
 If `references/` is missing or empty, tell the user:
 
