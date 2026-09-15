@@ -45,18 +45,12 @@ mkdir -p "$_WORKSPACE_DIR"
 
 ## Phase 0-I-A: 레퍼런스 확인
 
-이 체크는 `SKILL.md`가 있는 스킬 폴더 기준으로 실행한다.
+플러그인 루트는 `plugin.json`과 `skills/`가 있는 디렉터리다. 레퍼런스는 `<plugin-root>/references/`에 있다. 사용자 워크스페이스의 `references/`는 쓰지 않는다.
 
-```bash
-_HAS_REFERENCES=false
-_SKILL_REFERENCES_DIR="references"
-[ -d "$_SKILL_REFERENCES_DIR" ] && [ "$(find "$_SKILL_REFERENCES_DIR" -type f | head -1)" ] && _HAS_REFERENCES=true
-echo "HAS_REFERENCES: $_HAS_REFERENCES"
-```
-
-- `_HAS_REFERENCES=false`이면 사용자에게 알린다:
-  - "스킬 폴더 안의 `references/`가 비어 있습니다. 이력서 작성 레퍼런스를 입력해 주시면 스킬 안의 `references/`에 저장하고 진행할 수 있고, 넣지 않고 바로 진행할 수도 있습니다."
-- 사용자가 레퍼런스를 넣겠다고 하면 입력을 받아 `references/user-notes.md` 또는 사용자가 지정한 파일명으로 저장한다.
+- `<plugin-root>/references/`에 파일이 있으면 그 파일들을 로드한다.
+- 없으면 사용자에게 알린다:
+  - "플러그인의 `references/`가 비어 있습니다. 이력서 작성 레퍼런스를 넣고 진행할 수도 있고, 넣지 않고 바로 진행할 수도 있습니다."
+- 사용자가 추가 레퍼런스를 넣겠다고 하면 `_workspace/user-notes.md` 또는 사용자가 지정한 워크스페이스 파일명으로 저장한다. 플러그인 디렉터리에는 쓰지 않는다.
 - 사용자가 바로 진행하겠다고 하거나 명시하지 않으면, 레퍼런스 없이 기본 워크플로우로 진행한다.
 
 ---

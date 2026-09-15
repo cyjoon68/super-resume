@@ -1,7 +1,7 @@
 {
   "name": "super-resume",
-  "version": "0.1.0+codex.20260822061938",
-  "description": "\uacf5\uace0 \uae30\uc900\uc73c\ub85c \uc774\ub825\uc11c\u00b7\ud3ec\ud2b8\ud3f4\ub9ac\uc624\u00b7\uc790\uae30\uc18c\uac1c\uc11c\ub97c \ub9de\ucda4 \uc791\uc131\ud558\uace0 \ubb38\uc81c\ud574\uacb0 \ud504\ub85c\uc81d\ud2b8 \uae30\ud68d\uc11c\ub97c \uc0dd\uc131\ud558\ub294 Codex workflow plugin.",
+  "version": "0.1.1+codex.20260915041923",
+  "description": "공고 기준으로 이력서·포트폴리오·자기소개서를 맞춤 작성하고 문제해결 프로젝트 기획서를 생성하는 Codex workflow plugin.",
   "author": {
     "name": "cyjoon68"
   },
@@ -18,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Super Resume",
-    "shortDescription": "\uacf5\uace0 \ub9de\ucda4 \uc774\ub825\uc11c\u00b7\ud3ec\ud2b8\ud3f4\ub9ac\uc624\u00b7\uc790\uae30\uc18c\uac1c\uc11c \uc6cc\ud06c\ud50c\ub85c\uc6b0.",
-    "longDescription": "Super Resume\uc740 \uc774\ub825\uc11c, \ud3ec\ud2b8\ud3f4\ub9ac\uc624, \uc790\uae30\uc18c\uac1c\uc11c, GitHub, \ucc44\uc6a9 \uacf5\uace0\ub97c \uc77d\uace0 \uacf5\uace0 \uc801\ud569\ub3c4 \ubd84\uc11d, \ubb38\uc7a5 \uc218\uc815, \uacbd\ud5d8 \uae30\ubc18 \uc790\uae30\uc18c\uac1c\uc11c \uc791\uc131, \ud504\ub85c\uc81d\ud2b8 \uacbd\ud5d8 \uc124\uacc4, \ub514\uc790\uc778/PDF \ucd9c\ub825\uae4c\uc9c0 \uc774\uc5b4\uc8fc\ub294 Codex workflow plugin\uc785\ub2c8\ub2e4.",
+    "shortDescription": "공고 맞춤 이력서·포트폴리오·자기소개서 워크플로우.",
+    "longDescription": "Super Resume은 이력서, 포트폴리오, 자기소개서, GitHub, 채용 공고를 읽고 공고 적합도 분석, 문장 수정, 경험 기반 자기소개서 작성, 프로젝트 경험 설계, 디자인/PDF 출력까지 이어주는 Codex workflow plugin입니다.",
     "developerName": "cyjoon68",
     "category": "Productivity",
     "capabilities": [
